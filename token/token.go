@@ -32,3 +32,15 @@ const (
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
 )
+
+var keywords = map[string]Tokentype{
+	"fn":  FUNCTION,
+	"let": LET,
+}
+
+func LookupIdent(ident string) Tokentype {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+	return IDENT
+}
