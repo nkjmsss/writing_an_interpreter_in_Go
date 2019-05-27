@@ -1,0 +1,9 @@
+version: "3"
+services:
+  go:
+    build: .
+    volumes:
+      - .:/go/src/github.com/nkjmsss/writing_an_interpreter_in_Go
+    tty: true
+    environment:
+      GO111MODULE: "on"
