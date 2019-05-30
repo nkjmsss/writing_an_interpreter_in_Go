@@ -34,12 +34,32 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{
+				Type:    token.EQ,
+				Literal: literal,
+			}
+			break
+		}
 		tok = newToken(token.ASSIGN, l.ch)
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
 	case '-':
 		tok = newToken(token.MINUS, l.ch)
 	case '!':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{
+				Type:    token.NEQ,
+				Literal: literal,
+			}
+			break
+		}
 		tok = newToken(token.BANG, l.ch)
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
@@ -65,12 +85,12 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Literal = ""
 		tok.Type = token.EOF
 	default:
-		if isLetter(l.ch) {
+		if isLetter(l.ch) { // ident
 			ident := l.readIdentifier()
 			tok.Type = token.LookupIdent(ident)
 			tok.Literal = ident
 			return tok
-		} else if isDigit(l.ch) {
+		} else if isDigit(l.ch) { // int
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
 			return tok
@@ -118,4 +138,11 @@ func (l *Lexer) readNumber() string {
 		l.readChar()
 	}
 	return l.input[position:l.position]
+}
+
+func (l *Lexer) peekChar() byte {
+	if l.position >= len(l.input) {
+		return 0
+	}
+	return l.input[l.readPosition]
 }
