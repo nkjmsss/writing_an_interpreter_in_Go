@@ -34,6 +34,7 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
+		// TODO: 抽象化（==と!=）
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
@@ -120,6 +121,7 @@ func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
+// TODO: 抽象化（readIdentifierとreadNumber）
 func (l *Lexer) readIdentifier() string {
 	position := l.position
 	for isLetter(l.ch) {
