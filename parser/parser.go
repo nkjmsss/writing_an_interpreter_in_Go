@@ -20,6 +20,8 @@ const (
 	CALL        // myFunc(X)
 )
 
+const debug = false
+
 var precedences = map[token.TokenType]int{
 	token.EQ:       EQUALS,
 	token.NEQ:      EQUALS,
@@ -164,6 +166,9 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	if debug {
+		defer untrace(trace("parseExpressionStatement"))
+	}
 	stmt := &ast.ExpressionStatement{
 		Token: p.curToken,
 	}
@@ -178,6 +183,9 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
+	if debug {
+		defer untrace(trace("parseExpression"))
+	}
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
@@ -239,6 +247,9 @@ func (p *Parser) parseIdentifier() ast.Expression {
 }
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {
+	if debug {
+		defer untrace(trace("parseIntegerLiteral"))
+	}
 	lit := &ast.IntegerLiteral{
 		Token: p.curToken,
 	}
@@ -258,6 +269,9 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 }
 
 func (p *Parser) parsePrefixExpression() ast.Expression {
+	if debug {
+		defer untrace(trace("parsePrefixExpression"))
+	}
 	expression := &ast.PrefixExpression{
 		Token:    p.curToken,
 		Operator: p.curToken.Literal,
@@ -269,6 +283,9 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 }
 
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
+	if debug {
+		defer untrace(trace("parseInfixExpression"))
+	}
 	expression := &ast.InfixExpression{
 		Token:    p.curToken,
 		Operator: p.curToken.Literal,
