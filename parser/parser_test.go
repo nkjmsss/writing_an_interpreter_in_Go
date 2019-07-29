@@ -14,11 +14,7 @@ func TestLetStatements(t *testing.T) {
 		expectedIdentifier string
 		expectedValue      interface{}
 	}{
-		{
-			input:              "let x = 5;",
-			expectedIdentifier: "x",
-			expectedValue:      5,
-		},
+		{"let x = 5;", "x", 5},
 	}
 
 	for _, tt := range tests {
@@ -51,10 +47,7 @@ func TestReturnStatements(t *testing.T) {
 		input         string
 		expectedValue interface{}
 	}{
-		{
-			input:         "return 5;",
-			expectedValue: 5,
-		},
+		{"return 5;", 5},
 	}
 
 	for _, tt := range tests {
@@ -240,6 +233,8 @@ func TestParsingPrefixExpressions(t *testing.T) {
 	}{
 		{"!5", "!", 5},
 		{"-15", "-", 15},
+		{"!foobar;", "!", "foobar"},
+		{"-foobar;", "-", "foobar"},
 		{"!true;", "!", true},
 		{"!false;", "!", false},
 	}
@@ -292,72 +287,17 @@ func TestParsingInfixExpressions(t *testing.T) {
 		operator   string
 		rightValue interface{}
 	}{
-		{
-			input:      "5 + 5;",
-			leftValue:  5,
-			operator:   "+",
-			rightValue: 5,
-		},
-		{
-			input:      "5 - 5;",
-			leftValue:  5,
-			operator:   "-",
-			rightValue: 5,
-		},
-		{
-			input:      "5 * 5;",
-			leftValue:  5,
-			operator:   "*",
-			rightValue: 5,
-		},
-		{
-			input:      "5 / 5;",
-			leftValue:  5,
-			operator:   "/",
-			rightValue: 5,
-		},
-		{
-			input:      "5 > 5;",
-			leftValue:  5,
-			operator:   ">",
-			rightValue: 5,
-		},
-		{
-			input:      "5 < 5;",
-			leftValue:  5,
-			operator:   "<",
-			rightValue: 5,
-		},
-		{
-			input:      "5 == 5;",
-			leftValue:  5,
-			operator:   "==",
-			rightValue: 5,
-		},
-		{
-			input:      "5 != 5;",
-			leftValue:  5,
-			operator:   "!=",
-			rightValue: 5,
-		},
-		{
-			input:      "true == true",
-			leftValue:  true,
-			operator:   "==",
-			rightValue: true,
-		},
-		{
-			input:      "true != false",
-			leftValue:  true,
-			operator:   "!=",
-			rightValue: false,
-		},
-		{
-			input:      "false == false",
-			leftValue:  false,
-			operator:   "==",
-			rightValue: false,
-		},
+		{"5 + 5;", 5, "+", 5},
+		{"5 - 5;", 5, "-", 5},
+		{"5 * 5;", 5, "*", 5},
+		{"5 / 5;", 5, "/", 5},
+		{"5 > 5;", 5, ">", 5},
+		{"5 < 5;", 5, "<", 5},
+		{"5 == 5;", 5, "==", 5},
+		{"5 != 5;", 5, "!=", 5},
+		{"true == true", true, "==", true},
+		{"true != false", true, "!=", false},
+		{"false == false", false, "==", false},
 	}
 
 	for _, tt := range infixTests {
@@ -393,70 +333,22 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{
-			input:    "-a * b",
-			expected: "((-a) * b)",
-		},
-		{
-			input:    "!-a",
-			expected: "(!(-a))",
-		},
-		{
-			input:    "a + b + c",
-			expected: "((a + b) + c)",
-		},
-		{
-			input:    "a + b - c",
-			expected: "((a + b) - c)",
-		},
-		{
-			input:    "a * b * c",
-			expected: "((a * b) * c)",
-		},
-		{
-			input:    "a * b / c",
-			expected: "((a * b) / c)",
-		},
-		{
-			input:    "a + b / c",
-			expected: "(a + (b / c))",
-		},
-		{
-			input:    "a + b * c + d / e - f",
-			expected: "(((a + (b * c)) + (d / e)) - f)",
-		},
-		{
-			input:    "3 + 4; -5 * 5",
-			expected: "(3 + 4)((-5) * 5)",
-		},
-		{
-			input:    "5 > 4 == 3 < 4",
-			expected: "((5 > 4) == (3 < 4))",
-		},
-		{
-			input:    "5 < 4 != 3 > 4",
-			expected: "((5 < 4) != (3 > 4))",
-		},
-		{
-			input:    "3 + 4 * 5 == 3 * 1 + 4 * 5",
-			expected: "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
-		},
-		{
-			input:    "true",
-			expected: "true",
-		},
-		{
-			input:    "false",
-			expected: "false",
-		},
-		{
-			input:    "3 > 5 == false",
-			expected: "((3 > 5) == false)",
-		},
-		{
-			input:    "3 < 5 == true",
-			expected: "((3 < 5) == true)",
-		},
+		{"-a * b", "((-a) * b)"},
+		{"!-a", "(!(-a))"},
+		{"a + b + c", "((a + b) + c)"},
+		{"a + b - c", "((a + b) - c)"},
+		{"a * b * c", "((a * b) * c)"},
+		{"a * b / c", "((a * b) / c)"},
+		{"a + b / c", "(a + (b / c))"},
+		{"a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"},
+		{"3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"},
+		{"5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"},
+		{"5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"},
+		{"3 + 4 * 5 == 3 * 1 + 4 * 5", "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"},
+		{"true", "true"},
+		{"false", "false"},
+		{"3 > 5 == false", "((3 > 5) == false)"},
+		{"3 < 5 == true", "((3 < 5) == true)"},
 	}
 
 	for _, tt := range precedenceTests {
