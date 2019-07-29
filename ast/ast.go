@@ -124,6 +124,7 @@ func (rs *ReturnStatement) String() string {
 
 	out.WriteString(rs.TokenLiteral())
 
+	// TODO fix here
 	if rs.ReturnValue != nil {
 		out.WriteString(rs.ReturnValue.String())
 	}
